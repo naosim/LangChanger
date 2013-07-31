@@ -48,14 +48,27 @@ function getMergeXML($argv) {
 	}
 	return $result;
 }
-
-// "hoge\"foo"; => hoge\"foo
+/*
+ * 文言部分を取得する
+ * "hoge\"foo"; => hoge\"foo
+ */
 function getValue($v) {
 	$v = trim($v);
 	$v = str_replace(";", "", $v);
+	
 	$v = str_replace("\\\"", "####Qt####", $v);
 	$v = str_replace("\"", "", $v);
 	$v = str_replace("####Qt####", "\\\"", $v);
+	
+	// %d -> %1$d
+	$v = str_replace("\\%", "####per####", $v);
+	$ary = explode("%", $v);
+	$v = $ary[0];
+	for ($i=1; $i < count($ary); $i++) { 
+		$v .= '%' . $i . '$' . $ary[$i];
+	}
+	$v = str_replace("####per####", "\\%", $v);
+	
 	return $v;
 }
 
